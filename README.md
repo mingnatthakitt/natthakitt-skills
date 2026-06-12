@@ -48,41 +48,78 @@ Produces academically-formatted research manuscripts with LaTeX equations, BibTe
 
 ## Installation
 
-### Option 1: Manual Installation (Recommended)
+### Option 1: npx skills add (Recommended)
 
-Create symlinks to the skills directory:
+Install using the [skills CLI](https://github.com/vercel-labs/skills) by Vercel Labs:
 
 ```bash
-# Create skills directory in your project
+# Install all skills
+npx skills add mingnatthakitt/ming-skills
+
+# Install specific skills only
+npx skills add mingnatthakitt/ming-skills --skill wiki
+npx skills add mingnatthakitt/ming-skills --skill manuscript
+
+# Install globally (available to all projects)
+npx skills add mingnatthakitt/ming-skills --global
+
+# Install with confirmation skipped
+npx skills add mingnatthakitt/ming-skills --yes
+```
+
+---
+
+### Option 2: Git Clone + Symlink
+
+```bash
+# Clone the repository
+git clone https://github.com/mingnatthakitt/ming-skills.git ~/ming-skills
+
+# Create symlinks
+mkdir -p ~/.claude/skills
+ln -s ~/ming-skills/skills/wiki ~/.claude/skills/wiki
+ln -s ~/ming-skills/skills/manuscript ~/.claude/skills/manuscript
+```
+
+---
+
+### Option 3: Per-Project Installation
+
+```bash
+# In your project directory
+git clone https://github.com/mingnatthakitt/ming-skills.git .claude/ming-skills
+
+# Create symlinks
 mkdir -p .claude/skills
-
-# Link wiki skill
-ln -s ~/Documents/CS/ming-skills/wiki ~/.claude/skills/wiki
-
-# Link manuscript skill
-ln -s ~/Documents/CS/ming-skills/manuscript ~/.claude/skills/manuscript
+ln -s .claude/ming-skills/skills/wiki .claude/skills/wiki
+ln -s .claude/ming-skills/skills/manuscript .claude/skills/manuscript
 ```
 
-### Option 2: Clone and Link
+---
+
+### Option 4: Direct Copy
 
 ```bash
-# Clone this repository
-git clone https://github.com/yourusername/ming-skills.git ~/Documents/CS/ming-skills
+# Clone anywhere
+git clone https://github.com/mingnatthakitt/ming-skills.git /path/to/ming-skills
 
-# Create symlinks in your project
-ln -s ~/Documents/CS/ming-skills/wiki /path/to/project/.claude/skills/wiki
-ln -s ~/Documents/CS/ming-skills/manuscript /path/to/project/.claude/skills/manuscript
+# Copy directly to skills directory
+cp -r /path/to/ming-skills/skills/wiki ~/.claude/skills/wiki
+cp -r /path/to/ming-skills/skills/manuscript ~/.claude/skills/manuscript
 ```
 
-### Option 3: Using claude-skills CLI
+---
 
-Use the [@spardutti/claude-skills](https://www.npmjs.com/package/@spardutti/claude-skills) interactive installer:
+## Quick Start
 
 ```bash
-npx @spardutti/claude-skills
-```
+# One-liner installation
+npx skills add mingnatthakitt/ming-skills --yes
 
-Then select the skills you want to install from the catalog.
+# Use in Claude Code
+/wiki        # Generate documentation
+/manuscript  # Generate research paper
+```
 
 ---
 
@@ -90,22 +127,19 @@ Then select the skills you want to install from the catalog.
 
 ```
 ming-skills/
-├── README.md              # This file
-├── wiki/
-│   └── SKILL.md           # Wiki skill definition
-└── manuscript/
-    └── SKILL.md           # Manuscript skill definition
+├── README.md
+└── skills/
+    ├── wiki/
+    │   └── SKILL.md           # Wiki skill definition
+    └── manuscript/
+        └── SKILL.md           # Manuscript skill definition
 ```
 
 ---
 
 ## Skill Format
 
-Each skill is a directory containing:
-
-- **`SKILL.md`** — The skill definition with:
-  - YAML frontmatter (`name`, `description`, `trigger conditions`)
-  - Markdown body with instructions and guidelines
+Each skill is a directory containing `SKILL.md` with YAML frontmatter:
 
 ```markdown
 ---
@@ -123,7 +157,9 @@ Detailed instructions...
 ## Requirements
 
 - [Claude Code](https://claude.ai/code) installed
-- Node.js 18+ (for some CLI features)
+- Node.js 18+ (for npx skills CLI)
+- Git for cloning
+- For Manuscript: LaTeX distribution (pdflatex, bibtex)
 
 ---
 
@@ -133,19 +169,8 @@ MIT
 
 ---
 
-## Contributing
-
-Contributions welcome! To add a new skill:
-
-1. Create a directory under `skills/<skill-name>/`
-2. Add a `SKILL.md` file with proper frontmatter
-3. Follow the skill authoring conventions
-4. Submit a pull request
-
----
-
 ## Links
 
-- [Claude Code Documentation](https://docs.claude.com/claude-code)
-- [@spardutti/claude-skills](https://www.npmjs.com/package/@spardutti/claude-skills) - Interactive skill installer
-- [Awesome Claude Code Skills](https://github.com/topics/claude-code-skills) - Community skill collection
+- [Claude Code](https://claude.ai/code)
+- [skills CLI by Vercel Labs](https://github.com/vercel-labs/skills)
+- [ming-skills GitHub](https://github.com/mingnatthakitt/ming-skills)
