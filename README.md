@@ -54,17 +54,17 @@ Install using the [skills CLI](https://github.com/vercel-labs/skills) by Vercel 
 
 ```bash
 # Install all skills
-npx skills add mingnatthakitt/ming-skills
+npx skills add mingnatthakitt/natthakitt-skills
 
 # Install specific skills only
-npx skills add mingnatthakitt/ming-skills --skill wiki
-npx skills add mingnatthakitt/ming-skills --skill manuscript
+npx skills add mingnatthakitt/natthakitt-skills --skill wiki
+npx skills add mingnatthakitt/natthakitt-skills --skill manuscript
 
 # Install globally (available to all projects)
-npx skills add mingnatthakitt/ming-skills --global
+npx skills add mingnatthakitt/natthakitt-skills --global
 
 # Install with confirmation skipped
-npx skills add mingnatthakitt/ming-skills --yes
+npx skills add mingnatthakitt/natthakitt-skills --yes
 ```
 
 ---
@@ -73,12 +73,12 @@ npx skills add mingnatthakitt/ming-skills --yes
 
 ```bash
 # Clone the repository
-git clone https://github.com/mingnatthakitt/ming-skills.git ~/ming-skills
+git clone https://github.com/mingnatthakitt/natthakitt-skills.git ~/natthakitt-skills
 
 # Create symlinks
 mkdir -p ~/.claude/skills
-ln -s ~/ming-skills/skills/wiki ~/.claude/skills/wiki
-ln -s ~/ming-skills/skills/manuscript ~/.claude/skills/manuscript
+ln -s ~/natthakitt-skills/skills/wiki ~/.claude/skills/wiki
+ln -s ~/natthakitt-skills/skills/manuscript ~/.claude/skills/manuscript
 ```
 
 ---
@@ -87,12 +87,12 @@ ln -s ~/ming-skills/skills/manuscript ~/.claude/skills/manuscript
 
 ```bash
 # In your project directory
-git clone https://github.com/mingnatthakitt/ming-skills.git .claude/ming-skills
+git clone https://github.com/mingnatthakitt/natthakitt-skills.git .claude/natthakitt-skills
 
 # Create symlinks
 mkdir -p .claude/skills
-ln -s .claude/ming-skills/skills/wiki .claude/skills/wiki
-ln -s .claude/ming-skills/skills/manuscript .claude/skills/manuscript
+ln -s .claude/natthakitt-skills/skills/wiki .claude/skills/wiki
+ln -s .claude/natthakitt-skills/skills/manuscript .claude/skills/manuscript
 ```
 
 ---
@@ -101,11 +101,11 @@ ln -s .claude/ming-skills/skills/manuscript .claude/skills/manuscript
 
 ```bash
 # Clone anywhere
-git clone https://github.com/mingnatthakitt/ming-skills.git /path/to/ming-skills
+git clone https://github.com/mingnatthakitt/natthakitt-skills.git /path/to/natthakitt-skills
 
 # Copy directly to skills directory
-cp -r /path/to/ming-skills/skills/wiki ~/.claude/skills/wiki
-cp -r /path/to/ming-skills/skills/manuscript ~/.claude/skills/manuscript
+cp -r /path/to/natthakitt-skills/skills/wiki ~/.claude/skills/wiki
+cp -r /path/to/natthakitt-skills/skills/manuscript ~/.claude/skills/manuscript
 ```
 
 ---
@@ -114,7 +114,7 @@ cp -r /path/to/ming-skills/skills/manuscript ~/.claude/skills/manuscript
 
 ```bash
 # One-liner installation
-npx skills add mingnatthakitt/ming-skills --yes
+npx skills add mingnatthakitt/natthakitt-skills --yes
 
 # Use in Claude Code
 /wiki        # Generate documentation
@@ -126,7 +126,7 @@ npx skills add mingnatthakitt/ming-skills --yes
 ## Structure
 
 ```
-ming-skills/
+natthakitt-skills/
 ├── README.md
 └── skills/
     ├── wiki/
@@ -173,4 +173,4 @@ MIT
 
 - [Claude Code](https://claude.ai/code)
 - [skills CLI by Vercel Labs](https://github.com/vercel-labs/skills)
-- [ming-skills GitHub](https://github.com/mingnatthakitt/ming-skills)
+- [natthakitt-skills GitHub](https://github.com/mingnatthakitt/natthakitt-skills)
