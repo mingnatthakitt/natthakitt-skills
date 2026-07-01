@@ -5,13 +5,14 @@ description: Analyze the repository and generate a structured Wiki with architec
 
 # Wiki — Auto-Generated Codebase Documentation
 
-Generates a comprehensive, structured Wiki for the repository by analyzing code structure and producing browsable markdown and HTML documentation with interactive mindmaps.
+Generates a comprehensive, structured Wiki for the repository by analyzing code structure and producing browsable markdown and a dark-themed HTML manual with embedded SVG mindmaps, architecture diagrams, and workflow visualizations.
 
 **IMPORTANT:** When this skill is invoked, you MUST:
 1. Analyze the codebase thoroughly — EVERYTHING including internal details
 2. Create actual files in the project directory using Write tool
-3. Generate BOTH markdown AND HTML outputs with mindmap
-4. NEVER expose `.env` files, secrets, API keys, or sensitive configuration values
+3. Generate BOTH markdown AND HTML outputs
+4. Generate SVG mindmaps, architecture diagrams, and workflow visualizations
+5. NEVER expose `.env` files, secrets, API keys, or sensitive configuration values
 
 ## Trigger Conditions
 
@@ -54,19 +55,20 @@ Generates a comprehensive, structured Wiki for the repository by analyzing code 
 ├── resources.md                 # External resources, configs, env vars (redacted)
 ├── workflows.md                 # Build, test, deploy, CI/CD workflows
 └── figures/
-    └── [diagram-name].md       # Architecture diagrams in Mermaid
+    └── [diagram-name].md       # Architecture diagrams (SVG reference)
 ```
 
-### HTML Output (`{project-root}/.claude/wiki/html/`)
+### HTML Manual Output (`{project-root}/.claude/wiki/html/`)
 
 ```
 .claude/wiki/html/
-├── index.html                   # Main wiki page with navigation
-├── mindmap.html                 # Interactive architecture mindmap
-├── styles.css                   # Wiki styling
+├── index.html                   # THE HOLY GRAIL — dark-themed manual with all SVGs embedded
+├── styles.css                   # Dark theme styling
+├── mindmap.svg                  # Interactive architecture mindmap (inline in index.html)
+├── architecture.svg             # System architecture diagram (inline in index.html)
+├── workflows.svg                # CI/CD workflow diagram (inline in index.html)
 └── assets/
-    ├── mindmap-data.json        # Mindmap structure data
-    └── diagrams/               # Generated SVG diagrams
+    └── (any supplementary assets)
 ```
 
 ## Generation Process
@@ -142,10 +144,16 @@ mkdir -p .claude/wiki/modules
 mkdir -p .claude/wiki/api
 mkdir -p .claude/wiki/workflows
 mkdir -p .claude/wiki/figures
-mkdir -p .claude/wiki/html/assets/diagrams
+mkdir -p .claude/wiki/html/assets
 ```
 
 ### Phase 3: Generate and Write ALL Files
+
+#### SVG Diagrams to Generate
+
+1. **`mindmap.svg`** — Architecture mindmap (interactive tree layout)
+2. **`architecture.svg`** — System component diagram
+3. **`workflows.svg`** — CI/CD build/deploy pipeline
 
 #### Required Markdown Files:
 
@@ -159,444 +167,391 @@ mkdir -p .claude/wiki/html/assets/diagrams
 8. **`.claude/wiki/resources.md`** — Configs (REDACTED)
 9. **`.claude/wiki/workflows.md`** — CI/CD, builds, deployments
 
-#### Required HTML Files:
+#### Required HTML Manual Files:
 
-1. **`.claude/wiki/html/index.html`** — Interactive wiki
-2. **`.claude/wiki/html/mindmap.html`** — Visual architecture mindmap
-3. **`.claude/wiki/html/styles.css`** — Styling
-4. **`.claude/wiki/html/assets/mindmap-data.json`** — Mindmap data
+1. **`.claude/wiki/html/index.html`** — THE HOLY GRAIL dark-themed manual
+2. **`.claude/wiki/html/styles.css`** — Dark theme styling
 
 ### Detailed File Specifications
 
-#### README.md (Entry Point)
+#### SVG Diagram Generation
 
-```markdown
-# {Project Name} Wiki
+All SVGs must be hand-crafted SVG with:
+- Dark theme colors (dark background, light text, accent colors)
+- Clean node-based layouts
+- Connecting lines/arrows between nodes
+- Legend/color key where appropriate
+- Viewbox for scalability
 
-Generated on {date}
+##### mindmap.svg Structure
 
-## Overview
-{Comprehensive description of what this project does and its purpose}
+```svg
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background -->
+  <rect width="100%" height="100%" fill="#0d1117"/>
 
-## Quick Navigation
-- [Architecture](architecture.md)
-- [Modules](modules/)
-- [API](api/)
-- [Patterns](patterns.md)
-- [Resources](resources.md)
-- [Workflows](workflows.md)
-- [HTML Version](./html/index.html)
-- [Mind Map](./html/mindmap.html)
+  <!-- Central root node -->
+  <g class="root">
+    <rect x="500" y="20" width="200" height="50" rx="8" fill="#238636"/>
+    <text x="600" y="52" text-anchor="middle" fill="#fff" font-family="system-ui">Project Name</text>
+  </g>
 
-## Project Statistics
-- Total modules: N
-- Total API endpoints: N
-- Total lines of code: N
-- Languages used: {list}
-- Package manager: {npm/pip/cargo/etc}
+  <!-- Main branches -->
+  <g class="branch" data-label="Architecture">
+    <!-- Branch node -->
+    <rect x="50" y="100" width="150" height="40" rx="6" fill="#1f6feb"/>
+    <text x="125" y="125" text-anchor="middle" fill="#fff">Architecture</text>
+    <!-- Sub-branches -->
+    <line x1="200" y1="120" x2="250" y2="180" stroke="#484f58" stroke-width="2"/>
+    <rect x="250" y="160" width="120" height="35" rx="5" fill="#2d333b"/>
+    <text x="310" y="183" text-anchor="middle" fill="#e6edf3">Core</text>
+    <!-- etc -->
+  </g>
 
-## Directory Structure
-{ASCII tree of project structure}
+  <!-- Connectors with curves -->
+  <path d="M600,70 Q600,100 550,120" stroke="#484f58" fill="none" stroke-width="2"/>
+</svg>
 ```
 
-#### architecture.md
+##### architecture.svg Structure
 
-```markdown
-# System Architecture
+```svg
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#0d1117"/>
 
-## High-Level Design
-{Detailed description of system architecture}
+  <!-- Component boxes -->
+  <g class="component" data-component="frontend">
+    <rect x="50" y="50" width="200" height="120" rx="8" fill="#21262d" stroke="#30363d"/>
+    <text x="150" y="80" text-anchor="middle" fill="#e6edf3" font-weight="bold">Frontend</text>
+    <text x="150" y="105" text-anchor="middle" fill="#8b949e" font-size="12">React / Next.js</text>
+    <rect x="70" y="120" width="160" height="30" rx="4" fill="#1f6feb" opacity="0.2"/>
+    <text x="150" y="140" text-anchor="middle" fill="#58a6ff" font-size="11">Components</text>
+  </g>
 
-## Component Diagram
-```mermaid
-graph TD
-    A[Component A] --> B[Component B]
-    B --> C[Database]
-```
-```
+  <!-- Arrows between components -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#484f58"/>
+    </marker>
+  </defs>
+  <line x1="250" y1="110" x2="350" y2="110" stroke="#484f58" stroke-width="2" marker-end="url(#arrowhead)"/>
 
-## Data Flow
-{Explain how data moves through the system}
+  <!-- API Gateway -->
+  <g class="component" data-component="api-gateway">
+    <rect x="350" y="50" width="200" height="120" rx="8" fill="#21262d" stroke="#30363d"/>
+    <text x="450" y="80" text-anchor="middle" fill="#e6edf3" font-weight="bold">API Gateway</text>
+    <text x="450" y="105" text-anchor="middle" fill="#8b949e" font-size="12">Express / FastAPI</text>
+  </g>
 
-## Key Design Decisions
-{Explain architectural choices and rationale}
+  <!-- Database -->
+  <g class="component" data-component="database">
+    <rect x="350" y="250" width="200" height="100" rx="8" fill="#21262d" stroke="#30363d"/>
+    <text x="450" y="285" text-anchor="middle" fill="#e6edf3" font-weight="bold">Database</text>
+    <text x="450" y="310" text-anchor="middle" fill="#8b949e" font-size="12">PostgreSQL / MongoDB</text>
+  </g>
 
-## Scalability Considerations
-{How the system scales}
-
-## Security Architecture
-{Never show secrets — describe security model only}
-```
-
-#### modules/[module-name].md — EVERY MODULE
-
-```markdown
-# {Module Name}
-
-## Overview
-{Purpose and responsibility of this module}
-
-## Location
-`src/{module-path}/`
-
-## Public API
-
-### Functions
-
-#### `functionName(param1: Type, param2: Type): ReturnType`
-- **Description:** {what it does}
-- **Parameters:**
-  - `param1` — {description} (required)
-  - `param2` — {description} (optional, default: {value})
-- **Returns:** {description}
-- **Throws:** {exceptions that can be thrown}
-- **Complexity:** {time and space complexity if relevant}
-
-### Classes/Interfaces
-
-#### `ClassName`
-- **Description:** {what it represents}
-- **Properties:**
-  - `property1` — {description} (type: Type)
-  - `property2` — {description} (type: Type, readonly)
-- **Methods:**
-  - `methodName()` — {description}
-  - `static create()` — {description}
-
-## Internal Implementation
-
-### Private Functions
-{detail every internal/helper function}
-
-### Constants
-- `CONSTANT_NAME` — {description} (value: {type})
-
-## Dependencies
-- {dependency1} — {why needed}
-- {dependency2} — {why needed}
-
-## Usage Example
-\`\`\`{language}
-{code example}
-\`\`\`
+  <!-- Connectors -->
+  <line x1="450" y1="170" x2="450" y2="250" stroke="#484f58" stroke-width="2" marker-end="url(#arrowhead)"/>
+</svg>
 ```
 
-#### api/[endpoint-name].md — EVERY ENDPOINT
+##### workflows.svg Structure
 
-```markdown
-# {HTTP Method} {endpoint-path}
+```svg
+<svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#0d1117"/>
 
-## Overview
-{What this endpoint does}
+  <!-- Pipeline stages as columns -->
+  <g class="stage" data-stage="build">
+    <rect x="30" y="30" width="180" height="440" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="120" y="60" text-anchor="middle" fill="#e6edf3" font-weight="bold" font-size="14">BUILD</text>
 
-## Endpoint
-```
-{HTTP Method} /api/v1/resource
-```
+    <!-- Step boxes -->
+    <rect x="50" y="90" width="140" height="50" rx="6" fill="#21262d"/>
+    <text x="120" y="120" text-anchor="middle" fill="#58a6ff">Checkout</text>
 
-## Authentication
-{Auth type and requirements — e.g., "Bearer token required", "API Key in header"}
+    <rect x="50" y="160" width="140" height="50" rx="6" fill="#21262d"/>
+    <text x="120" y="190" text-anchor="middle" fill="#58a6ff">Install</text>
 
-## Request
+    <rect x="50" y="230" width="140" height="50" rx="6" fill="#21262d"/>
+    <text x="120" y="260" text-anchor="middle" fill="#58a6ff">Lint</text>
 
-### Headers
-| Header | Type | Required | Description |
-|--------|------|----------|-------------|
-| Content-Type | string | Yes | Must be `application/json` |
-| Authorization | string | Yes | Bearer {token} |
+    <!-- Connectors within stage -->
+    <line x1="120" y1="140" x2="120" y2="160" stroke="#484f58" stroke-width="2"/>
+    <line x1="120" y1="210" x2="120" y2="230" stroke="#484f58" stroke-width="2"/>
+  </g>
 
-### Path Parameters
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Resource ID |
-
-### Query Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| page | number | No | 1 | Page number |
-| limit | number | No | 20 | Items per page |
-
-### Request Body
-\`\`\`json
-{
-  "field1": "string (required)",
-  "field2": "number (optional)",
-  "nested": {
-    "key": "string"
-  }
-}
-\`\`\`
-
-## Response
-
-### Success Response (200)
-\`\`\`json
-{
-  "success": true,
-  "data": {
-    "id": "123",
-    "name": "Example"
-  },
-  "meta": {
-    "page": 1,
-    "total": 100
-  }
-}
-\`\`\`
-
-### Error Responses
-
-#### 400 Bad Request
-\`\`\`json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid request parameters",
-    "details": [
-      { "field": "email", "message": "Invalid email format" }
-    ]
-  }
-}
-\`\`\`
-
-#### 401 Unauthorized
-\`\`\`json
-{
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Invalid or expired authentication token"
-  }
-}
-\`\`\`
-
-#### 404 Not Found
-\`\`\`json
-{
-  "success": false,
-  "error": {
-    "code": "NOT_FOUND",
-    "message": "Resource not found"
-  }
-}
-\`\`\`
-
-#### 500 Internal Server Error
-\`\`\`json
-{
-  "success": false,
-  "error": {
-    "code": "INTERNAL_ERROR",
-    "message": "An unexpected error occurred"
-  }
-}
-\`\`\`
-
-## Example
-
-### cURL
-\`\`\`bash
-curl -X GET "https://api.example.com/api/v1/users/123" \
-  -H "Authorization: Bearer {token}"
-\`\`\`
-
-### JavaScript
-\`\`\`javascript
-const response = await fetch('/api/v1/users/123', {
-  headers: {
-    'Authorization': 'Bearer {token}'
-  }
-});
-\`\`\`
+  <!-- Stage connectors (between columns) -->
+  <line x1="210" y1="115" x2="250" y2="115" stroke="#238636" stroke-width="3"/>
+  <polygon points="250,115 245,110 245,120" fill="#238636"/>
+</svg>
 ```
 
-#### resources.md — REDACTED SENSITIVE VALUES
+#### index.html — THE HOLY GRAIL MANUAL
 
-```markdown
-# Configuration Resources
-
-## Environment Variables
-
-| Variable | Type | Required | Description |
-|----------|------|----------|-------------|
-| DATABASE_URL | string | Yes | Database connection URL |
-| API_KEY | string | Yes | API authentication key |
-| PORT | number | No | Server port (default: 3000) |
-| NODE_ENV | string | No | Environment (development/production) |
-
-> ⚠️ **Note:** Actual values are redacted for security. Contact your administrator for access.
-
-## Configuration Files
-
-### package.json
-- **Location:** `package.json`
-- **Purpose:** Node.js project configuration
-- **Key fields:**
-  - `name` — Project identifier
-  - `version` — Current version
-  - `scripts` — Available npm scripts
-
-### tsconfig.json
-- **Location:** `tsconfig.json`
-- **Purpose:** TypeScript configuration
-- **Key settings:**
-  - `target` — Compilation target
-  - `strict` — Enable strict type checking
-```
-
-#### workflows.md
-
-```markdown
-# Workflows
-
-## Build Process
-
-### Development Build
-\`\`\`bash
-npm run dev
-\`\`\`
-- Compiles TypeScript
-- Starts hot-reload server
-- Watches for changes
-
-### Production Build
-\`\`\`bash
-npm run build
-\`\`\`
-- Compiles TypeScript to JavaScript
-- Optimizes bundle
-- Outputs to `dist/` directory
-
-## Testing
-
-### Unit Tests
-\`\`\`bash
-npm run test:unit
-\`\`\`
-- Runs Jest unit tests
-- Coverage report generated
-
-### Integration Tests
-\`\`\`bash
-npm run test:integration
-\`\`\`
-- Tests API endpoints
-- Uses test database
-
-## Deployment
-
-### CI/CD Pipeline
-{Describe the deployment pipeline with Mermaid diagram}
-
-```mermaid
-graph LR
-    A[Push] --> B[Build]
-    B --> C[Test]
-    C --> D[Deploy Staging]
-    D --> E[Deploy Production]
-```
-```
-
-## Mindmap Structure
-
-The mindmap should represent:
-
-```
-{Project Name}
-├── Architecture
-│   ├── Core
-│   │   ├── Module A
-│   │   │   ├── Sub-module A1
-│   │   │   ├── Sub-module A2
-│   │   │   └── Helper Functions
-│   │   └── Module B
-│   │       ├── Main Class
-│   │       └── Utilities
-│   ├── Data Layer
-│   │   ├── Database Schema
-│   │   ├── ORM Models
-│   │   └── Migrations
-│   └── External Services
-│       ├── API Clients
-│       └── Third-party SDKs
-├── API Endpoints
-│   ├── /users
-│   │   ├── GET /users
-│   │   ├── POST /users
-│   │   ├── GET /users/:id
-│   │   ├── PUT /users/:id
-│   │   └── DELETE /users/:id
-│   ├── /products
-│   └── /orders
-├── Workflows
-│   ├── Build
-│   │   ├── Compile
-│   │   ├── Bundle
-│   │   └── Minify
-│   ├── Test
-│   │   ├── Unit
-│   │   ├── Integration
-│   │   └── E2E
-│   ├── Deploy
-│   │   ├── Staging
-│   │   └── Production
-│   └── CI/CD
-│       ├── Lint
-│       ├── Security Scan
-│       └── Deploy
-└── Patterns
-    ├── Design Patterns
-    │   ├── Factory
-    │   ├── Singleton
-    │   └── Observer
-    └── Architectural Patterns
-        ├── MVC
-        ├── Repository
-        └── Service Layer
-```
-
-### Mindmap HTML Implementation
-
-Use D3.js for interactive mindmap with:
+A single-page dark-themed HTML manual that embeds all SVG diagrams inline and provides comprehensive navigation to all documentation.
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        .node { cursor: pointer; }
-        .node circle { fill: #fff; stroke: #333; stroke-width: 2px; }
-        .node text { font: 12px sans-serif; }
-        .link { fill: none; stroke: #ccc; stroke-width: 2px; }
-        .mindmap-container { width: 100%; height: 100vh; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{Project Name} — The Holy Grail</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="mindmap" class="mindmap-container"></div>
-    <script>
-        // D3.js mindmap implementation with:
-        // - Zoom and pan (d3.zoom)
-        // - Click to expand/collapse
-        // - Hover tooltips
-        // - Search/filter functionality
-    </script>
+    <header>
+        <nav class="sidebar">
+            <div class="logo">{Project Name}</div>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#mindmap">Mind Map</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#workflows">Workflows</a></li>
+                <li><a href="#modules">Modules</a></li>
+                <li><a href="#api">API</a></li>
+                <li><a href="#patterns">Patterns</a></li>
+                <li><a href="#resources">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="overview" class="hero">
+            <h1>{Project Name}</h1>
+            <p class="tagline">The Holy Grail of Documentation</p>
+            <div class="stats">
+                <span>{N} Modules</span>
+                <span>{N} API Endpoints</span>
+                <span>{N} Files</span>
+            </div>
+        </section>
+
+        <section id="mindmap">
+            <h2>Architecture Mind Map</h2>
+            <div class="diagram-container">
+                <!-- Inline SVG mindmap -->
+                <svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Full dark theme mindmap SVG embedded inline -->
+                </svg>
+            </div>
+        </section>
+
+        <section id="architecture">
+            <h2>System Architecture</h2>
+            <div class="diagram-container">
+                <!-- Inline SVG architecture diagram -->
+                <svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Full dark theme architecture SVG embedded inline -->
+                </svg>
+            </div>
+        </section>
+
+        <section id="workflows">
+            <h2>CI/CD Workflows</h2>
+            <div class="diagram-container">
+                <!-- Inline SVG workflows diagram -->
+                <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Full dark theme workflows SVG embedded inline -->
+                </svg>
+            </div>
+        </section>
+
+        <section id="modules">
+            <h2>Modules</h2>
+            <div class="grid">
+                <!-- Module cards -->
+            </div>
+        </section>
+
+        <section id="api">
+            <h2>API Endpoints</h2>
+            <div class="endpoints">
+                <!-- Endpoint listings -->
+            </div>
+        </section>
+
+        <section id="patterns">
+            <h2>Patterns & Conventions</h2>
+            <!-- Pattern documentation -->
+        </section>
+
+        <section id="resources">
+            <h2>Resources & Configuration</h2>
+            <!-- Redacted configuration -->
+        </section>
+    </main>
+
+    <footer>
+        <p>Generated on {date} · <a href="../README.md">View Markdown Version</a></p>
+    </footer>
 </body>
 </html>
 ```
 
-Or use Markmap for simpler Markdown-based mindmap:
+#### styles.css — Dark Theme
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/markmap-autoloader"></script>
+```css
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --accent-blue: #58a6ff;
+    --accent-green: #238636;
+    --accent-purple: #a371f7;
+    --accent-orange: #d29922;
+    --accent-red: #f85149;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 32px;
+}
+
+.nav-links {
+    list-style: none;
+}
+
+.nav-links li {
+    margin-bottom: 8px;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: block;
+    transition: all 0.2s;
+}
+
+.nav-links a:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+main {
+    margin-left: 260px;
+    padding: 48px;
+    max-width: 1200px;
+}
+
+section {
+    margin-bottom: 80px;
+}
+
+.hero {
+    text-align: center;
+    padding: 80px 0;
+}
+
+.hero h1 {
+    font-size: 56px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+}
+
+.tagline {
+    font-size: 24px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+}
+
+.stats {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+}
+
+.stats span {
+    background: var(--bg-tertiary);
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.diagram-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    overflow-x: auto;
+}
+
+.diagram-container svg {
+    width: 100%;
+    height: auto;
+    max-width: none;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+}
 ```
 
 ## Configuration Options
 
 ### Output Location
 - Markdown: `{project-root}/.claude/wiki/`
-- HTML: `{project-root}/.claude/wiki/html/`
+- HTML Manual: `{project-root}/.claude/wiki/html/`
 
 ### Options
 - `--force` — overwrite existing wiki
@@ -626,3 +581,11 @@ Or use Markmap for simpler Markdown-based mindmap:
    - Use consistent formatting
    - Include code examples
    - Add cross-references between related items
+
+5. **SVG Diagrams:**
+   - All SVGs must use dark theme colors
+   - ViewBox for scalability
+   - Semantic grouping with `g` elements
+   - Descriptive class/data attributes
+   - Clean connecting lines with arrow markers
+   - Accessible with title/desc elements
