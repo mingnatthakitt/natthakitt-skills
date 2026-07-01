@@ -5,22 +5,28 @@ A collection of custom skills for [Claude Code](https://claude.ai/code) that ext
 ## Skills
 
 ### Wiki (`wiki`)
-Generates comprehensive structured documentation for repositories with markdown pages and interactive HTML mindmaps.
+Generates a comprehensive **dark-themed HTML manual** ("The Holy Grail") with embedded SVG diagrams, plus structured markdown documentation for repositories.
 
 **Trigger:** `/wiki`
 
 **Features:**
-- Analyzes codebase structure and architecture
-- Generates markdown documentation (README, architecture, modules, API, patterns)
-- Creates interactive HTML wiki with sidebar navigation
-- Produces visual mindmaps for architecture and workflows
-- Supports build, test, deploy, and CI/CD workflow visualization
+- Full codebase analysis — every module, function, API endpoint, and pattern
+- **SVG mindmap** — hierarchical architecture tree with color-coded branches
+- **SVG architecture diagram** — component-level system design with data-flow arrows
+- **SVG workflow diagram** — CI/CD pipeline: Build → Test → Deploy → Monitor stages
+- **Dark-themed HTML manual** — single-page `index.html` with all SVGs embedded inline, sidebar nav, no external dependencies
+- Markdown docs: README, architecture, modules, API, patterns, resources (redacted), workflows
+- Security-first: all `.env`, secrets, API keys, and credentials are redacted
+- All SVGs use right-angle connectors, grid-based layout, and minimum 14px fonts to prevent overlapping text
 
 **Usage:**
 ```bash
-/wiki
+/wiki                  # Generate full wiki (markdown + HTML manual)
 /wiki --force          # Overwrite existing wiki
-/wiki --deep           # More thorough analysis
+/wiki --modules-only   # Only generate module docs
+/wiki --api-only       # Only generate API docs
+/wiki --html-only      # Skip markdown, only generate HTML manual
+/wiki --mindmap-only   # Only generate the SVG mindmap
 ```
 
 ---

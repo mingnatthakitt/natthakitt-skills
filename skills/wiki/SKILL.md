@@ -176,114 +176,463 @@ mkdir -p .claude/wiki/html/assets
 
 #### SVG Diagram Generation
 
-All SVGs must be hand-crafted SVG with:
-- Dark theme colors (dark background, light text, accent colors)
-- Clean node-based layouts
-- Connecting lines/arrows between nodes
-- Legend/color key where appropriate
-- Viewbox for scalability
+All SVGs must be hand-crafted SVG with careful attention to **readability and non-overlapping layout**.
+
+**Layout Principles:**
+- Use a **grid-based layout** with explicit x/y coordinates — no automatic positioning
+- **Space nodes apart** — minimum 40px horizontal gap between sibling nodes, 60px vertical gap between levels
+- **Never overlap nodes** — calculate bounding boxes and ensure no intersection
+- **Wrap long text** inside nodes or limit node width to prevent text overflow
+- **Use a generous viewBox** that fits the content with comfortable margins (at least 60px padding on all sides)
+- **Group related elements** in `<g>` with clear IDs — never dump all elements at the root level
+- **Order layers deliberately** — background → connectors → nodes → labels
+
+**Font & Text Rules:**
+- Minimum **14px font size** for any text — 12px is acceptable only for fine-print labels
+- Use `dominant-baseline: middle` and `text-anchor: middle` for centered node labels
+- Keep node labels **short (under 30 chars)** — break longer labels across multiple lines using `<tspan>` or multiple `<text>` elements
+- Never let text touch node borders — minimum **12px padding** inside rects
+- Use a **monospace or system-ui font stack** for consistency
+
+**Sizing & Spacing:**
+- Node rects: minimum **100px wide × 40px tall** for leaf nodes, larger for parent nodes
+- Corner radius (`rx`): **6–8px** for a clean look, never fully squared
+- Stroke width: **1.5–2px** for outlines, **2–3px** for connector lines
+- Arrow markers: defined in `<defs>`, sized at **10×7** with proper refX/refY
+
+**Connector Rules:**
+- Draw connectors **from edge to edge** of nodes, not center to center
+- Use **right-angle paths** (horizontal then vertical, or vice versa) instead of diagonal lines — much easier to trace
+- Avoid **3-way or 4-way connector intersections** — reroute paths to avoid crossing
+- Add **15px clearance** around any connector crossing another node
+- Connector color: `#30363d` or `#484f58` (subtle), never bright colors
+
+**Color Palette:**
+- Background: `#0d1117`
+- Node fills: `#161b22` (standard), `#21262d` (highlighted), `#1f6feb` (info), `#238636` (success/root)
+- Node borders: `#30363d`
+- Text: `#e6edf3` (primary), `#8b949e` (secondary)
+- Connectors: `#30363d`
+- Accent arrows: `#484f58`
+
+**Accessibility:**
+- Every `<svg>` must have `<title>` and `<desc>`
+- Interactive elements should have `role` and `aria-label`
+- High contrast ratio — never put light text on light background or vice versa
 
 ##### mindmap.svg Structure
 
 ```svg
-<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-  <!-- Dark background -->
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Architecture Mind Map</title>
+  <desc>Hierarchical tree showing project architecture from root to leaf modules</desc>
+
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#30363d"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
   <rect width="100%" height="100%" fill="#0d1117"/>
 
-  <!-- Central root node -->
-  <g class="root">
-    <rect x="500" y="20" width="200" height="50" rx="8" fill="#238636"/>
-    <text x="600" y="52" text-anchor="middle" fill="#fff" font-family="system-ui">Project Name</text>
+  <!-- LAYER 1: Root node (centered top) -->
+  <g id="root">
+    <rect x="600" y="30" width="200" height="55" rx="8" fill="#238636" stroke="#2ea043" stroke-width="1.5"/>
+    <text x="700" y="63" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">Project Name</text>
   </g>
 
-  <!-- Main branches -->
-  <g class="branch" data-label="Architecture">
-    <!-- Branch node -->
-    <rect x="50" y="100" width="150" height="40" rx="6" fill="#1f6feb"/>
-    <text x="125" y="125" text-anchor="middle" fill="#fff">Architecture</text>
-    <!-- Sub-branches -->
-    <line x1="200" y1="120" x2="250" y2="180" stroke="#484f58" stroke-width="2"/>
-    <rect x="250" y="160" width="120" height="35" rx="5" fill="#2d333b"/>
-    <text x="310" y="183" text-anchor="middle" fill="#e6edf3">Core</text>
-    <!-- etc -->
+  <!-- LAYER 2: Top-level branches (4 columns, well-spaced) -->
+  <!-- Each branch is 300px wide with 40px gap from neighbors -->
+  <!-- Branch: Architecture (x: 40–340) -->
+  <g id="branch-architecture">
+    <!-- Connector: root bottom (700,85) → branch top (190,160) -->
+    <path d="M700,85 L700,120 L190,120 L190,145" stroke="#30363d" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+    <rect x="90" y="145" width="200" height="45" rx="6" fill="#1f6feb" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="190" y="173" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Architecture</text>
+
+    <!-- Sub-nodes (vertically stacked, 70px apart) -->
+    <!-- Sub: Core (x: 40–340, y: 215) -->
+    <rect x="40" y="215" width="130" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="105" y="242" text-anchor="middle" fill="#e6edf3" font-size="13">Core</text>
+
+    <!-- Sub: Data Layer -->
+    <rect x="190" y="215" width="130" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="255" y="242" text-anchor="middle" fill="#e6edf3" font-size="13">Data Layer</text>
+
+    <!-- Sub-sub nodes (beneath Core, y: 280) -->
+    <path d="M105,255 L105,275" stroke="#30363d" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <rect x="40" y="280" width="130" height="35" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="105" y="304" text-anchor="middle" fill="#8b949e" font-size="12">Database</text>
+
+    <!-- Sub-sub nodes (beneath Data Layer, y: 280) -->
+    <path d="M255,255 L255,275" stroke="#30363d" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <rect x="190" y="280" width="130" height="35" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="255" y="304" text-anchor="middle" fill="#8b949e" font-size="12">Models</text>
   </g>
 
-  <!-- Connectors with curves -->
-  <path d="M600,70 Q600,100 550,120" stroke="#484f58" fill="none" stroke-width="2"/>
+  <!-- Branch: API (x: 380–680) -->
+  <g id="branch-api">
+    <path d="M700,85 L700,120 L530,120 L530,145" stroke="#30363d" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+    <rect x="430" y="145" width="200" height="45" rx="6" fill="#a371f7" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="530" y="173" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">API Endpoints</text>
+
+    <!-- API sub-nodes (vertically stacked) -->
+    <rect x="430" y="215" width="90" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="475" y="242" text-anchor="middle" fill="#e6edf3" font-size="12">/users</text>
+
+    <rect x="540" y="215" width="90" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="585" y="242" text-anchor="middle" fill="#e6edf3" font-size="12">/orders</text>
+  </g>
+
+  <!-- Branch: Workflows (x: 720–1020) -->
+  <g id="branch-workflows">
+    <path d="M700,85 L700,120 L870,120 L870,145" stroke="#30363d" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+    <rect x="770" y="145" width="200" height="45" rx="6" fill="#d29922" stroke="#e3b341" stroke-width="1.5"/>
+    <text x="870" y="173" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Workflows</text>
+
+    <rect x="770" y="215" width="90" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="815" y="242" text-anchor="middle" fill="#e6edf3" font-size="12">Build</text>
+
+    <rect x="880" y="215" width="90" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="925" y="242" text-anchor="middle" fill="#e6edf3" font-size="12">Deploy</text>
+  </g>
+
+  <!-- Branch: Patterns (x: 1060–1260) -->
+  <g id="branch-patterns">
+    <path d="M700,85 L700,120 L1130,120 L1130,145" stroke="#30363d" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+    <rect x="1030" y="145" width="200" height="45" rx="6" fill="#f85149" stroke="#ff7b72" stroke-width="1.5"/>
+    <text x="1130" y="173" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Patterns</text>
+
+    <rect x="1030" y="215" width="200" height="40" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="1130" y="242" text-anchor="middle" fill="#e6edf3" font-size="12">Design Patterns</text>
+  </g>
 </svg>
 ```
 
 ##### architecture.svg Structure
 
 ```svg
-<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#0d1117"/>
+<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>System Architecture</title>
+  <desc>Component diagram showing system layers and data flow</desc>
 
-  <!-- Component boxes -->
-  <g class="component" data-component="frontend">
-    <rect x="50" y="50" width="200" height="120" rx="8" fill="#21262d" stroke="#30363d"/>
-    <text x="150" y="80" text-anchor="middle" fill="#e6edf3" font-weight="bold">Frontend</text>
-    <text x="150" y="105" text-anchor="middle" fill="#8b949e" font-size="12">React / Next.js</text>
-    <rect x="70" y="120" width="160" height="30" rx="4" fill="#1f6feb" opacity="0.2"/>
-    <text x="150" y="140" text-anchor="middle" fill="#58a6ff" font-size="11">Components</text>
-  </g>
-
-  <!-- Arrows between components -->
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#484f58"/>
     </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#238636"/>
+    </marker>
   </defs>
-  <line x1="250" y1="110" x2="350" y2="110" stroke="#484f58" stroke-width="2" marker-end="url(#arrowhead)"/>
 
-  <!-- API Gateway -->
-  <g class="component" data-component="api-gateway">
-    <rect x="350" y="50" width="200" height="120" rx="8" fill="#21262d" stroke="#30363d"/>
-    <text x="450" y="80" text-anchor="middle" fill="#e6edf3" font-weight="bold">API Gateway</text>
-    <text x="450" y="105" text-anchor="middle" fill="#8b949e" font-size="12">Express / FastAPI</text>
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#0d1117"/>
+
+  <!-- LAYER: External (top row, y: 40) -->
+  <g id="layer-external">
+    <!-- Client -->
+    <g id="client">
+      <rect x="60" y="40" width="160" height="80" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="140" y="70" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Client</text>
+      <text x="140" y="90" text-anchor="middle" fill="#8b949e" font-size="11">Browser / Mobile</text>
+    </g>
+
+    <!-- Third-party Services -->
+    <g id="external-services">
+      <rect x="980" y="40" width="160" height="80" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="1060" y="70" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">External APIs</text>
+      <text x="1060" y="90" text-anchor="middle" fill="#8b949e" font-size="11">Stripe, SendGrid</text>
+    </g>
   </g>
 
-  <!-- Database -->
-  <g class="component" data-component="database">
-    <rect x="350" y="250" width="200" height="100" rx="8" fill="#21262d" stroke="#30363d"/>
-    <text x="450" y="285" text-anchor="middle" fill="#e6edf3" font-weight="bold">Database</text>
-    <text x="450" y="310" text-anchor="middle" fill="#8b949e" font-size="12">PostgreSQL / MongoDB</text>
+  <!-- LAYER: Application (middle row, y: 180) -->
+  <g id="layer-application">
+    <!-- API Gateway -->
+    <g id="api-gateway">
+      <rect x="420" y="180" width="360" height="100" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="600" y="215" text-anchor="middle" fill="#e6edf3" font-size="15" font-weight="700">API Gateway</text>
+      <text x="600" y="238" text-anchor="middle" fill="#8b949e" font-size="12">Express / FastAPI · Auth · Rate Limit</text>
+    </g>
+
+    <!-- Services (split into columns) -->
+    <!-- Auth Service -->
+    <g id="auth-service">
+      <rect x="80" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="170" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Auth Service</text>
+      <text x="170" y="388" text-anchor="middle" fill="#8b949e" font-size="11">JWT · Sessions</text>
+    </g>
+
+    <!-- User Service -->
+    <g id="user-service">
+      <rect x="290" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="380" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">User Service</text>
+      <text x="380" y="388" text-anchor="middle" fill="#8b949e" font-size="11">CRUD · Profiles</text>
+    </g>
+
+    <!-- Order Service -->
+    <g id="order-service">
+      <rect x="500" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="590" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Order Service</text>
+      <text x="590" y="388" text-anchor="middle" fill="#8b949e" font-size="11">Checkout · Cart</text>
+    </g>
+
+    <!-- Product Service -->
+    <g id="product-service">
+      <rect x="710" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="800" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Product Service</text>
+      <text x="800" y="388" text-anchor="middle" fill="#8b949e" font-size="11">Catalog · Search</text>
+    </g>
   </g>
 
-  <!-- Connectors -->
-  <line x1="450" y1="170" x2="450" y2="250" stroke="#484f58" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <!-- LAYER: Data (bottom row, y: 480) -->
+  <g id="layer-data">
+    <!-- Primary DB -->
+    <g id="primary-db">
+      <rect x="290" y="480" width="200" height="80" rx="8" fill="#21262d" stroke="#238636" stroke-width="1.5"/>
+      <text x="390" y="515" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">PostgreSQL</text>
+      <text x="390" y="538" text-anchor="middle" fill="#8b949e" font-size="11">Primary Store</text>
+    </g>
+
+    <!-- Cache -->
+    <g id="cache">
+      <rect x="520" y="480" width="160" height="80" rx="8" fill="#21262d" stroke="#d29922" stroke-width="1.5"/>
+      <text x="600" y="515" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Redis</text>
+      <text x="600" y="538" text-anchor="middle" fill="#8b949e" font-size="11">Cache · Queue</text>
+    </g>
+
+    <!-- Object Storage -->
+    <g id="storage">
+      <rect x="710" y="480" width="180" height="80" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="800" y="515" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">S3 / R2</text>
+      <text x="800" y="538" text-anchor="middle" fill="#8b949e" font-size="11">Files · Media</text>
+    </g>
+  </g>
+
+  <!-- CONNECTORS (drawn after all nodes so they appear beneath) -->
+  <g id="connectors">
+    <!-- Client → API Gateway -->
+    <path d="M220,80 L420,80" stroke="#484f58" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+    <!-- API Gateway → Services -->
+    <path d="M420,230 L380,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M600,280 L600,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M780,230 L800,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+
+    <!-- Services → Data Layer (right-angle paths) -->
+    <path d="M380,420 L380,480" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
+    <path d="M590,420 L590,480" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M800,420 L800,480" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+
+    <!-- External → Services (right-angle) -->
+    <path d="M980,80 L980,200 L890,200 L890,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- LEGEND -->
+  <g id="legend" transform="translate(60, 600)">
+    <text x="0" y="0" fill="#8b949e" font-size="12" font-weight="600">LEGEND</text>
+    <rect x="0" y="10" width="16" height="16" rx="3" fill="#21262d" stroke="#238636"/>
+    <text x="24" y="23" fill="#8b949e" font-size="11">Primary Data</text>
+    <rect x="110" y="10" width="16" height="16" rx="3" fill="#21262d" stroke="#d29922"/>
+    <text x="134" y="23" fill="#8b949e" font-size="11">Cache / Queue</text>
+    <rect x="220" y="10" width="16" height="16" rx="3" fill="#21262d" stroke="#30363d"/>
+    <text x="244" y="23" fill="#8b949e" font-size="11">Standard</text>
+  </g>
 </svg>
 ```
 
 ##### workflows.svg Structure
 
 ```svg
-<svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>CI/CD Workflows</title>
+  <desc>Pipeline diagram showing build, test, and deploy stages</desc>
+
+  <defs>
+    <marker id="flow-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#30363d"/>
+    </marker>
+    <marker id="flow-arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#238636"/>
+    </marker>
+    <marker id="flow-arrow-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f85149"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
   <rect width="100%" height="100%" fill="#0d1117"/>
 
-  <!-- Pipeline stages as columns -->
-  <g class="stage" data-stage="build">
-    <rect x="30" y="30" width="180" height="440" rx="8" fill="#161b22" stroke="#30363d"/>
-    <text x="120" y="60" text-anchor="middle" fill="#e6edf3" font-weight="bold" font-size="14">BUILD</text>
+  <!-- STAGE COLUMNS: 4 stages, each 240px wide with 40px gaps -->
+  <!-- Column widths: 60px padding + step width + 60px margin -->
 
-    <!-- Step boxes -->
-    <rect x="50" y="90" width="140" height="50" rx="6" fill="#21262d"/>
-    <text x="120" y="120" text-anchor="middle" fill="#58a6ff">Checkout</text>
+  <!-- STAGE 1: Build (x: 40–280) -->
+  <g id="stage-build">
+    <rect x="40" y="40" width="240" height="520" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="160" y="70" text-anchor="middle" fill="#58a6ff" font-size="14" font-weight="700" letter-spacing="1">BUILD</text>
 
-    <rect x="50" y="160" width="140" height="50" rx="6" fill="#21262d"/>
-    <text x="120" y="190" text-anchor="middle" fill="#58a6ff">Install</text>
+    <!-- Step: Checkout -->
+    <g id="step-checkout">
+      <rect x="70" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="160" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Checkout</text>
+      <text x="160" y="148" text-anchor="middle" fill="#8b949e" font-size="11">git clone</text>
+    </g>
 
-    <rect x="50" y="230" width="140" height="50" rx="6" fill="#21262d"/>
-    <text x="120" y="260" text-anchor="middle" fill="#58a6ff">Lint</text>
+    <!-- Connector -->
+    <line x1="160" y1="160" x2="160" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
 
-    <!-- Connectors within stage -->
-    <line x1="120" y1="140" x2="120" y2="160" stroke="#484f58" stroke-width="2"/>
-    <line x1="120" y1="210" x2="120" y2="230" stroke="#484f58" stroke-width="2"/>
+    <!-- Step: Install -->
+    <g id="step-install">
+      <rect x="70" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="160" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Install</text>
+      <text x="160" y="233" text-anchor="middle" fill="#8b949e" font-size="11">npm ci</text>
+    </g>
+
+    <!-- Connector -->
+    <line x1="160" y1="245" x2="160" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <!-- Step: Lint -->
+    <g id="step-lint">
+      <rect x="70" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="160" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Lint</text>
+      <text x="160" y="318" text-anchor="middle" fill="#8b949e" font-size="11">ESLint · Prettier</text>
+    </g>
+
+    <!-- Connector -->
+    <line x1="160" y1="330" x2="160" y2="355" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <!-- Step: Compile -->
+    <g id="step-compile">
+      <rect x="70" y="355" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="160" y="385" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Compile</text>
+      <text x="160" y="403" text-anchor="middle" fill="#8b949e" font-size="11">tsc / webpack</text>
+    </g>
+
+    <!-- Connector -->
+    <line x1="160" y1="415" x2="160" y2="440" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <!-- Step: Bundle -->
+    <g id="step-bundle">
+      <rect x="70" y="440" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="160" y="470" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Bundle</text>
+      <text x="160" y="488" text-anchor="middle" fill="#8b949e" font-size="11">minify · assets</text>
+    </g>
   </g>
 
-  <!-- Stage connectors (between columns) -->
-  <line x1="210" y1="115" x2="250" y2="115" stroke="#238636" stroke-width="3"/>
-  <polygon points="250,115 245,110 245,120" fill="#238636"/>
+  <!-- STAGE 2: Test (x: 320–560) -->
+  <g id="stage-test">
+    <rect x="320" y="40" width="240" height="520" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="440" y="70" text-anchor="middle" fill="#a371f7" font-size="14" font-weight="700" letter-spacing="1">TEST</text>
+
+    <g id="step-unit">
+      <rect x="350" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="440" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Unit Tests</text>
+      <text x="440" y="148" text-anchor="middle" fill="#8b949e" font-size="11">Jest · 450+ tests</text>
+    </g>
+
+    <line x1="440" y1="160" x2="440" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-integration">
+      <rect x="350" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="440" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Integration</text>
+      <text x="440" y="233" text-anchor="middle" fill="#8b949e" font-size="11">API tests</text>
+    </g>
+
+    <line x1="440" y1="245" x2="440" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-e2e">
+      <rect x="350" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="440" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">E2E Tests</text>
+      <text x="440" y="318" text-anchor="middle" fill="#8b949e" font-size="11">Playwright</text>
+    </g>
+
+    <line x1="440" y1="330" x2="440" y2="355" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-security">
+      <rect x="350" y="355" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="440" y="385" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Security Scan</text>
+      <text x="440" y="403" text-anchor="middle" fill="#8b949e" font-size="11">Snyk · Semgrep</text>
+    </g>
+  </g>
+
+  <!-- INTER-STAGE CONNECTORS -->
+  <!-- Build → Test -->
+  <path d="M280,60 L320,60" stroke="#238636" stroke-width="3" fill="none" marker-end="url(#flow-arrow-green)"/>
+
+  <!-- STAGE 3: Deploy (x: 600–840) -->
+  <g id="stage-deploy">
+    <rect x="600" y="40" width="240" height="520" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="720" y="70" text-anchor="middle" fill="#238636" font-size="14" font-weight="700" letter-spacing="1">DEPLOY</text>
+
+    <g id="step-build-image">
+      <rect x="630" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="720" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Build Image</text>
+      <text x="720" y="148" text-anchor="middle" fill="#8b949e" font-size="11">Docker · BuildKit</text>
+    </g>
+
+    <line x1="720" y1="160" x2="720" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-staging">
+      <rect x="630" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#d29922" stroke-width="1.5"/>
+      <text x="720" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Deploy Staging</text>
+      <text x="720" y="233" text-anchor="middle" fill="#8b949e" font-size="11">Auto deploy</text>
+    </g>
+
+    <line x1="720" y1="245" x2="720" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-smoke">
+      <rect x="630" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="720" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Smoke Tests</text>
+      <text x="720" y="318" text-anchor="middle" fill="#8b949e" font-size="11">Health checks</text>
+    </g>
+
+    <line x1="720" y1="330" x2="720" y2="355" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-production">
+      <rect x="630" y="355" width="180" height="60" rx="6" fill="#21262d" stroke="#238636" stroke-width="1.5"/>
+      <text x="720" y="385" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Deploy Production</text>
+      <text x="720" y="403" text-anchor="middle" fill="#8b949e" font-size="11">Blue-green</text>
+    </g>
+  </g>
+
+  <!-- INTER-STAGE CONNECTOR: Test → Deploy -->
+  <path d="M560,60 L600,60" stroke="#238636" stroke-width="3" fill="none" marker-end="url(#flow-arrow-green)"/>
+
+  <!-- STAGE 4: Monitor (x: 880–1120) -->
+  <g id="stage-monitor">
+    <rect x="880" y="40" width="240" height="520" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="1000" y="70" text-anchor="middle" fill="#8b949e" font-size="14" font-weight="700" letter-spacing="1">MONITOR</text>
+
+    <g id="step-metrics">
+      <rect x="910" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="1000" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Metrics</text>
+      <text x="1000" y="148" text-anchor="middle" fill="#8b949e" font-size="11">Prometheus</text>
+    </g>
+
+    <line x1="1000" y1="160" x2="1000" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-logs">
+      <rect x="910" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+      <text x="1000" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Logs</text>
+      <text x="1000" y="233" text-anchor="middle" fill="#8b949e" font-size="11">Loki · Grafana</text>
+    </g>
+
+    <line x1="1000" y1="245" x2="1000" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+    <g id="step-alerts">
+      <rect x="910" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#f85149" stroke-width="1.5"/>
+      <text x="1000" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Alerts</text>
+      <text x="1000" y="318" text-anchor="middle" fill="#8b949e" font-size="11">PagerDuty</text>
+    </g>
+  </g>
+
+  <!-- INTER-STAGE CONNECTOR: Deploy → Monitor -->
+  <path d="M840,60 L880,60" stroke="#30363d" stroke-width="2" fill="none" marker-end="url(#flow-arrow)"/>
 </svg>
 ```
 
@@ -558,7 +907,7 @@ footer {
 - `--modules-only` — only generate module docs
 - `--api-only` — only generate API docs
 - `--html-only` — skip markdown, only generate HTML
-- `--mindmap-only` — only generate mindmap
+- `--svg-only` — only generate the SVG diagrams (mindmap, architecture, workflows)
 
 ## Quality Standards
 
