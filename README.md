@@ -26,7 +26,7 @@ Generates a comprehensive **dark-themed HTML manual** ("The Holy Grail") with em
 /wiki --modules-only   # Only generate module docs
 /wiki --api-only       # Only generate API docs
 /wiki --html-only      # Skip markdown, only generate HTML manual
-/wiki --mindmap-only   # Only generate the SVG mindmap
+/wiki --svg-only       # Only generate the SVG diagrams (mindmap, architecture, workflows)
 ```
 
 ---
