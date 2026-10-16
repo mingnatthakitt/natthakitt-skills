@@ -30,10 +30,13 @@ Produces a comprehensive, academically-styled research manuscript about the code
 - Database connection strings
 - Private keys and certificates
 - Any sensitive configuration
+- Do NOT open `.env` files. Take variable names from `.env.example` or code references, and never show values
 
 ## Output Structure
 
 ### Files to Create (`{project-root}/.claude/manuscript/`)
+
+If this folder already exists, list the files that would be overwritten and ask before writing.
 
 ```
 .claude/manuscript/
@@ -41,7 +44,15 @@ Produces a comprehensive, academically-styled research manuscript about the code
 ├── references.bib              # Bibliography (BibTeX — real citations)
 ├── references-placeholder.bib  # Placeholder citations for user
 ├── Makefile                    # Compilation helper
-├── abstract.tex                # Separate abstract file
+├── abstract.tex                # Abstract, wrapped in \begin{abstract}...\end{abstract}
+├── introduction.tex            # Section bodies below: text only, no \section commands
+├── background.tex              #   (manuscript.tex owns all section headings)
+├── architecture.tex
+├── implementation.tex
+├── mathematics.tex
+├── performance.tex
+├── discussion.tex
+├── conclusion.tex
 ├── figures/
 │   ├── architecture.tex        # Architecture diagram (TikZ/Mermaid)
 │   ├── dataflow.tex            # Data flow diagram
@@ -61,10 +72,10 @@ Produces a comprehensive, academically-styled research manuscript about the code
 
 #### 1. Structural Analysis
 - `ls` the project structure recursively
-- Read ALL source files (`.ts`, `.js`, `.py`, `.go`, `.rs`, `.java`, `.cpp`, etc.)
+- Read the source files (`.ts`, `.js`, `.py`, `.go`, `.rs`, `.java`, `.cpp`, etc.). For large repos, read entry points and public interfaces in full, sample the rest, and state the sampling in the Method section
 - Map directory structure and module organization
 - Identify entry points and main components
-- Document EVERY function, class, interface, constant
+- Document every public function, class, interface and constant
 
 #### 2. Semantic Analysis
 - Understand core algorithms and data transformations
@@ -127,11 +138,11 @@ If `.claude/wiki/` exists:
 ```latex
 \documentclass[10pt, conference]{IEEEtran}
 %\documentclass[12pt, a4paper, oneside]{article}  % For ACM format
+% IEEEtran sets its own margins. Add \usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry} only with the article class
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb, graphicx, hyperref}
 \usepackage{cite}
-\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
 \usepackage{listings}
 \usepackage{xcolor}
 
@@ -184,6 +195,24 @@ If `.claude/wiki/` exists:
 \label{sec:conclusion}
 \input{conclusion.tex}
 
+\section{Figures and Tables}
+\label{sec:figures}
+
+\subsection{Architecture Diagram}
+\input{figures/architecture.tex}
+
+\subsection{Data Flow Diagram}
+\input{figures/dataflow.tex}
+
+\subsection{State Machine Diagram}
+\input{figures/statemachine.tex}
+
+\subsection{API Endpoints}
+\input{tables/api-endpoints.tex}
+
+\subsection{Module Dependencies}
+\input{tables/module-deps.tex}
+
 \bibliography{references}
 \bibliographystyle{IEEEtran}  % For IEEE format
 %\bibliographystyle{acm}       % For ACM format
@@ -193,7 +222,7 @@ If `.claude/wiki/` exists:
 
 #### 2. references.bib — Real Academic Citations
 
-Include these real citations AND add placeholders:
+Include these real citations AND add placeholders. These entries are written from memory, so verify every field, especially DOIs and page numbers, against the publisher before submitting:
 
 ```bibtex
 % Design Patterns
@@ -209,21 +238,19 @@ Include these real citations AND add placeholders:
 }
 
 % Software Architecture
-@article{clements2001documenting,
+@book{clements2001evaluating,
     author = {Clements, Paul and Kazman, Rick and Klein, Mark},
     title = {Evaluating Software Architectures: Methods and Case Studies},
-    journal = { Addison-Wesley Professional},
     year = {2001},
     publisher = {Addison-Wesley}
 }
 
 % API Design
-@article{fielding2000architectural,
+@phdthesis{fielding2000architectural,
     author = {Fielding, Roy Thomas},
     title = {Architectural Styles and the Design of Network-based Software Architectures},
-    journal = {University of California, Irvine},
-    year = {2000},
-    note = {Ph.D. dissertation}
+    school = {University of California, Irvine},
+    year = {2000}
 }
 
 % State Machines
@@ -239,19 +266,19 @@ Include these real citations AND add placeholders:
 }
 
 % Complexity Analysis
-@article{cormen2009introduction,
+@book{cormen2009introduction,
     author = {Cormen, Thomas H. and Leiserson, Charles E. and Rivest, Ronald L. and Stein, Clifford},
     title = {Introduction to Algorithms},
-    journal = {MIT Press},
+    publisher = {MIT Press},
     edition = {Third},
     year = {2009}
 }
 
 % Machine Learning
-@article{goodfellow2016deep,
+@book{goodfellow2016deep,
     author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
     title = {Deep Learning},
-    journal = {MIT Press},
+    publisher = {MIT Press},
     year = {2016},
     url = {https://www.deeplearningbook.org}
 }
@@ -267,18 +294,18 @@ Include these real citations AND add placeholders:
 }
 
 % Optimization
-@article{kingma2014adam,
+@misc{kingma2014adam,
     author = {Kingma, Diederik P. and Ba, Jimmy},
     title = {Adam: A Method for Stochastic Optimization},
-    journal = {arXiv preprint arXiv:1412.6980},
+    howpublished = {arXiv preprint arXiv:1412.6980},
     year = {2014}
 }
 
 % Data Flow
-@article{abelson1996structure,
+@book{abelson1996structure,
     author = {Abelson, Harold and Sussman, Gerald Jay and Sussman, Julie},
     title = {Structure and Interpretation of Computer Programs},
-    journal = {MIT Press},
+    publisher = {MIT Press},
     year = {1996},
     edition = {Second}
 }
@@ -327,12 +354,12 @@ Include these real citations AND add placeholders:
 }
 ```
 
-#### 4. mathematics.tex — All Equation Types
+#### 4. mathematics.tex — Equations
+
+Include only equations that match code you read. Use the project's own symbols, not the example ones. The neural-network, loss and optimizer subsections apply only to ML projects (see `--ml`). Include the state-machine subsection only if the code has a state machine. The file is body text only: `manuscript.tex` supplies `\section{Mathematical Foundations}`.
 
 ```latex
-\section{Mathematical Foundations}
-\label{sec:mathematics}
-
+% Body only: manuscript.tex supplies \section{Mathematical Foundations}
 \subsection{Algorithm Complexity}
 \label{ssec:complexity}
 
@@ -512,27 +539,6 @@ Expectation calculation:
     \mathbb{E}[X] = \int_{-\infty}^{\infty} x \cdot f(x) dx
     \label{eq:expectation}
 \end{equation}
-
-\section{Figures and Diagrams}
-\label{sec:figures}
-
-\subsection{Architecture Diagram}
-\input{figures/architecture.tex}
-
-\subsection{Data Flow Diagram}
-\input{figures/dataflow.tex}
-
-\subsection{State Machine Diagram}
-\input{figures/statemachine.tex}
-
-\section{Tables}
-\label{sec:tables}
-
-\subsection{API Endpoints}
-\input{tables/api-endpoints.tex}
-
-\subsection{Module Dependencies}
-\input{tables/module-deps.tex}
 ```
 
 #### 5. figures/ — Diagram Generation
@@ -691,7 +697,7 @@ draft:
 
 ### Options
 - `--depth` — Analysis level (shallow, medium, deep)
-- `--format` — Citation style (ieee, acm, both)
+- `--format` — `ieee` (default) or `acm`. The `acm` variant swaps the documentclass and bibliographystyle lines in `manuscript.tex`. Both are not generated together
 - `--citations` — Include academic citations (default: true)
 - `--equations` — Include mathematical formalization (default: true)
 - `--figures` — Generate diagrams (default: true)
@@ -700,7 +706,7 @@ draft:
 
 ## Quality Standards
 
-1. **LaTeX compilation:** Must compile without errors
+1. **LaTeX compilation:** After writing, run `make -C .claude/manuscript build` and fix every error. If pdflatex or bibtex is not installed, say so instead of claiming it compiles
 2. **Equations:** All LaTeX syntactically correct
 3. **Citations:** Real academic refs + placeholders for user
 4. **Figures:** TikZ/Mermaid code that renders correctly

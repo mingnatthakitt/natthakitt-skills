@@ -28,7 +28,7 @@ Generates a comprehensive, structured Wiki for the repository by analyzing code 
 - Passwords and credentials
 - Database connection strings
 - Private keys and certificates
-- Any file matching `.env*`, `.gitignore`, `secrets.*`, `*.key`
+- Any file matching `.env*`, `secrets.*`, `*.key`, `*.pem`
 - Environment-specific configurations (PROD_KEY, SECRET, etc.)
 
 **For environment variables, show:**
@@ -64,7 +64,7 @@ Generates a comprehensive, structured Wiki for the repository by analyzing code 
 .claude/wiki/html/
 ├── index.html                   # THE HOLY GRAIL — dark-themed manual with all SVGs embedded
 ├── styles.css                   # Dark theme styling
-├── mindmap.svg                  # Interactive architecture mindmap (inline in index.html)
+├── mindmap.svg                  # Architecture mindmap (inline in index.html)
 ├── architecture.svg             # System architecture diagram (inline in index.html)
 ├── workflows.svg                # CI/CD workflow diagram (inline in index.html)
 └── assets/
@@ -76,6 +76,8 @@ Generates a comprehensive, structured Wiki for the repository by analyzing code 
 ### Phase 1: Comprehensive Codebase Analysis
 
 **Use Bash `find`/`ls` and Read tool to explore:**
+
+For large repositories (roughly 200+ source files), read entry points, configs and public interfaces in full, sample the rest, and state in `README.md` which parts were sampled. Do not let the analysis run out of context partway through.
 
 1. **Project Structure**
    - Root directory layout
@@ -98,7 +100,7 @@ Generates a comprehensive, structured Wiki for the repository by analyzing code 
    - Build configurations
    - Linting/formatting configs (ESLint, Prettier, etc.)
    - TypeScript config (`tsconfig.json`)
-   - Environment config (NEVER show values from `.env`)
+   - Environment config: do NOT open `.env` files. Take variable names from `.env.example` or from code references, and never show values
    - Docker configurations
    - CI/CD configurations
 
@@ -151,6 +153,8 @@ mkdir -p .claude/wiki/html/assets
 
 #### SVG Diagrams to Generate
 
+> The SVG and HTML snippets below are templates. Replace every label with facts from the repo you analyzed. Labels such as Jest, Redis, Stripe, PostgreSQL and PagerDuty are placeholders: do not copy them into the output unless the repo uses them.
+
 1. **`mindmap.svg`** — Architecture mindmap (interactive tree layout)
 2. **`architecture.svg`** — System component diagram
 3. **`workflows.svg`** — CI/CD build/deploy pipeline
@@ -188,7 +192,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
 - **Order layers deliberately** — background → connectors → nodes → labels
 
 **Font & Text Rules:**
-- Minimum **14px font size** for any text — 12px is acceptable only for fine-print labels
+- Minimum **12px font size** for any text; use **14px+** for node titles
 - Use `dominant-baseline: middle` and `text-anchor: middle` for centered node labels
 - Keep node labels **short (under 30 chars)** — break longer labels across multiple lines using `<tspan>` or multiple `<text>` elements
 - Never let text touch node borders — minimum **12px padding** inside rects
@@ -340,14 +344,14 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="client">
       <rect x="60" y="40" width="160" height="80" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="140" y="70" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Client</text>
-      <text x="140" y="90" text-anchor="middle" fill="#8b949e" font-size="11">Browser / Mobile</text>
+      <text x="140" y="90" text-anchor="middle" fill="#8b949e" font-size="12">Browser / Mobile</text>
     </g>
 
     <!-- Third-party Services -->
     <g id="external-services">
       <rect x="980" y="40" width="160" height="80" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="1060" y="70" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">External APIs</text>
-      <text x="1060" y="90" text-anchor="middle" fill="#8b949e" font-size="11">Stripe, SendGrid</text>
+      <text x="1060" y="90" text-anchor="middle" fill="#8b949e" font-size="12">Stripe, SendGrid</text>
     </g>
   </g>
 
@@ -365,28 +369,28 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="auth-service">
       <rect x="80" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="170" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Auth Service</text>
-      <text x="170" y="388" text-anchor="middle" fill="#8b949e" font-size="11">JWT · Sessions</text>
+      <text x="170" y="388" text-anchor="middle" fill="#8b949e" font-size="12">JWT · Sessions</text>
     </g>
 
     <!-- User Service -->
     <g id="user-service">
       <rect x="290" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="380" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">User Service</text>
-      <text x="380" y="388" text-anchor="middle" fill="#8b949e" font-size="11">CRUD · Profiles</text>
+      <text x="380" y="388" text-anchor="middle" fill="#8b949e" font-size="12">CRUD · Profiles</text>
     </g>
 
     <!-- Order Service -->
     <g id="order-service">
       <rect x="500" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="590" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Order Service</text>
-      <text x="590" y="388" text-anchor="middle" fill="#8b949e" font-size="11">Checkout · Cart</text>
+      <text x="590" y="388" text-anchor="middle" fill="#8b949e" font-size="12">Checkout · Cart</text>
     </g>
 
     <!-- Product Service -->
     <g id="product-service">
       <rect x="710" y="330" width="180" height="90" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="800" y="365" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Product Service</text>
-      <text x="800" y="388" text-anchor="middle" fill="#8b949e" font-size="11">Catalog · Search</text>
+      <text x="800" y="388" text-anchor="middle" fill="#8b949e" font-size="12">Catalog · Search</text>
     </g>
   </g>
 
@@ -396,21 +400,21 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="primary-db">
       <rect x="290" y="480" width="200" height="80" rx="8" fill="#21262d" stroke="#238636" stroke-width="1.5"/>
       <text x="390" y="515" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">PostgreSQL</text>
-      <text x="390" y="538" text-anchor="middle" fill="#8b949e" font-size="11">Primary Store</text>
+      <text x="390" y="538" text-anchor="middle" fill="#8b949e" font-size="12">Primary Store</text>
     </g>
 
     <!-- Cache -->
     <g id="cache">
       <rect x="520" y="480" width="160" height="80" rx="8" fill="#21262d" stroke="#d29922" stroke-width="1.5"/>
       <text x="600" y="515" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Redis</text>
-      <text x="600" y="538" text-anchor="middle" fill="#8b949e" font-size="11">Cache · Queue</text>
+      <text x="600" y="538" text-anchor="middle" fill="#8b949e" font-size="12">Cache · Queue</text>
     </g>
 
     <!-- Object Storage -->
     <g id="storage">
       <rect x="710" y="480" width="180" height="80" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="800" y="515" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">S3 / R2</text>
-      <text x="800" y="538" text-anchor="middle" fill="#8b949e" font-size="11">Files · Media</text>
+      <text x="800" y="538" text-anchor="middle" fill="#8b949e" font-size="12">Files · Media</text>
     </g>
   </g>
 
@@ -420,9 +424,9 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <path d="M220,80 L420,80" stroke="#484f58" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
 
     <!-- API Gateway → Services -->
-    <path d="M420,230 L380,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M420,250 L380,250 L380,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
     <path d="M600,280 L600,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
-    <path d="M780,230 L800,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M780,250 L800,250 L800,330" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
 
     <!-- Services → Data Layer (right-angle paths) -->
     <path d="M380,420 L380,480" stroke="#484f58" stroke-width="1.5" fill="none" marker-end="url(#arrowhead-green)"/>
@@ -437,11 +441,11 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
   <g id="legend" transform="translate(60, 600)">
     <text x="0" y="0" fill="#8b949e" font-size="12" font-weight="600">LEGEND</text>
     <rect x="0" y="10" width="16" height="16" rx="3" fill="#21262d" stroke="#238636"/>
-    <text x="24" y="23" fill="#8b949e" font-size="11">Primary Data</text>
+    <text x="24" y="23" fill="#8b949e" font-size="12">Primary Data</text>
     <rect x="110" y="10" width="16" height="16" rx="3" fill="#21262d" stroke="#d29922"/>
-    <text x="134" y="23" fill="#8b949e" font-size="11">Cache / Queue</text>
+    <text x="134" y="23" fill="#8b949e" font-size="12">Cache / Queue</text>
     <rect x="220" y="10" width="16" height="16" rx="3" fill="#21262d" stroke="#30363d"/>
-    <text x="244" y="23" fill="#8b949e" font-size="11">Standard</text>
+    <text x="244" y="23" fill="#8b949e" font-size="12">Standard</text>
   </g>
 </svg>
 ```
@@ -480,7 +484,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-checkout">
       <rect x="70" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="160" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Checkout</text>
-      <text x="160" y="148" text-anchor="middle" fill="#8b949e" font-size="11">git clone</text>
+      <text x="160" y="148" text-anchor="middle" fill="#8b949e" font-size="12">git clone</text>
     </g>
 
     <!-- Connector -->
@@ -490,7 +494,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-install">
       <rect x="70" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="160" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Install</text>
-      <text x="160" y="233" text-anchor="middle" fill="#8b949e" font-size="11">npm ci</text>
+      <text x="160" y="233" text-anchor="middle" fill="#8b949e" font-size="12">npm ci</text>
     </g>
 
     <!-- Connector -->
@@ -500,7 +504,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-lint">
       <rect x="70" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="160" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Lint</text>
-      <text x="160" y="318" text-anchor="middle" fill="#8b949e" font-size="11">ESLint · Prettier</text>
+      <text x="160" y="318" text-anchor="middle" fill="#8b949e" font-size="12">ESLint · Prettier</text>
     </g>
 
     <!-- Connector -->
@@ -510,7 +514,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-compile">
       <rect x="70" y="355" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="160" y="385" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Compile</text>
-      <text x="160" y="403" text-anchor="middle" fill="#8b949e" font-size="11">tsc / webpack</text>
+      <text x="160" y="403" text-anchor="middle" fill="#8b949e" font-size="12">tsc / webpack</text>
     </g>
 
     <!-- Connector -->
@@ -520,7 +524,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-bundle">
       <rect x="70" y="440" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="160" y="470" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Bundle</text>
-      <text x="160" y="488" text-anchor="middle" fill="#8b949e" font-size="11">minify · assets</text>
+      <text x="160" y="488" text-anchor="middle" fill="#8b949e" font-size="12">minify · assets</text>
     </g>
   </g>
 
@@ -532,7 +536,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-unit">
       <rect x="350" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="440" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Unit Tests</text>
-      <text x="440" y="148" text-anchor="middle" fill="#8b949e" font-size="11">Jest · 450+ tests</text>
+      <text x="440" y="148" text-anchor="middle" fill="#8b949e" font-size="12">Jest · 450+ tests</text>
     </g>
 
     <line x1="440" y1="160" x2="440" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -540,7 +544,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-integration">
       <rect x="350" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="440" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Integration</text>
-      <text x="440" y="233" text-anchor="middle" fill="#8b949e" font-size="11">API tests</text>
+      <text x="440" y="233" text-anchor="middle" fill="#8b949e" font-size="12">API tests</text>
     </g>
 
     <line x1="440" y1="245" x2="440" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -548,7 +552,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-e2e">
       <rect x="350" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="440" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">E2E Tests</text>
-      <text x="440" y="318" text-anchor="middle" fill="#8b949e" font-size="11">Playwright</text>
+      <text x="440" y="318" text-anchor="middle" fill="#8b949e" font-size="12">Playwright</text>
     </g>
 
     <line x1="440" y1="330" x2="440" y2="355" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -556,7 +560,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-security">
       <rect x="350" y="355" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="440" y="385" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Security Scan</text>
-      <text x="440" y="403" text-anchor="middle" fill="#8b949e" font-size="11">Snyk · Semgrep</text>
+      <text x="440" y="403" text-anchor="middle" fill="#8b949e" font-size="12">Snyk · Semgrep</text>
     </g>
   </g>
 
@@ -572,7 +576,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-build-image">
       <rect x="630" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="720" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Build Image</text>
-      <text x="720" y="148" text-anchor="middle" fill="#8b949e" font-size="11">Docker · BuildKit</text>
+      <text x="720" y="148" text-anchor="middle" fill="#8b949e" font-size="12">Docker · BuildKit</text>
     </g>
 
     <line x1="720" y1="160" x2="720" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -580,7 +584,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-staging">
       <rect x="630" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#d29922" stroke-width="1.5"/>
       <text x="720" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Deploy Staging</text>
-      <text x="720" y="233" text-anchor="middle" fill="#8b949e" font-size="11">Auto deploy</text>
+      <text x="720" y="233" text-anchor="middle" fill="#8b949e" font-size="12">Auto deploy</text>
     </g>
 
     <line x1="720" y1="245" x2="720" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -588,7 +592,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-smoke">
       <rect x="630" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="720" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Smoke Tests</text>
-      <text x="720" y="318" text-anchor="middle" fill="#8b949e" font-size="11">Health checks</text>
+      <text x="720" y="318" text-anchor="middle" fill="#8b949e" font-size="12">Health checks</text>
     </g>
 
     <line x1="720" y1="330" x2="720" y2="355" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -596,7 +600,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-production">
       <rect x="630" y="355" width="180" height="60" rx="6" fill="#21262d" stroke="#238636" stroke-width="1.5"/>
       <text x="720" y="385" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Deploy Production</text>
-      <text x="720" y="403" text-anchor="middle" fill="#8b949e" font-size="11">Blue-green</text>
+      <text x="720" y="403" text-anchor="middle" fill="#8b949e" font-size="12">Blue-green</text>
     </g>
   </g>
 
@@ -611,7 +615,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-metrics">
       <rect x="910" y="100" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="1000" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Metrics</text>
-      <text x="1000" y="148" text-anchor="middle" fill="#8b949e" font-size="11">Prometheus</text>
+      <text x="1000" y="148" text-anchor="middle" fill="#8b949e" font-size="12">Prometheus</text>
     </g>
 
     <line x1="1000" y1="160" x2="1000" y2="185" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -619,7 +623,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-logs">
       <rect x="910" y="185" width="180" height="60" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
       <text x="1000" y="215" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Logs</text>
-      <text x="1000" y="233" text-anchor="middle" fill="#8b949e" font-size="11">Loki · Grafana</text>
+      <text x="1000" y="233" text-anchor="middle" fill="#8b949e" font-size="12">Loki · Grafana</text>
     </g>
 
     <line x1="1000" y1="245" x2="1000" y2="270" stroke="#30363d" stroke-width="2" marker-end="url(#flow-arrow)"/>
@@ -627,7 +631,7 @@ All SVGs must be hand-crafted SVG with careful attention to **readability and no
     <g id="step-alerts">
       <rect x="910" y="270" width="180" height="60" rx="6" fill="#21262d" stroke="#f85149" stroke-width="1.5"/>
       <text x="1000" y="300" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="500">Alerts</text>
-      <text x="1000" y="318" text-anchor="middle" fill="#8b949e" font-size="11">PagerDuty</text>
+      <text x="1000" y="318" text-anchor="middle" fill="#8b949e" font-size="12">PagerDuty</text>
     </g>
   </g>
 
@@ -903,17 +907,17 @@ footer {
 - HTML Manual: `{project-root}/.claude/wiki/html/`
 
 ### Options
-- `--force` — overwrite existing wiki
-- `--modules-only` — only generate module docs
-- `--api-only` — only generate API docs
-- `--html-only` — skip markdown, only generate HTML
-- `--svg-only` — only generate the SVG diagrams (mindmap, architecture, workflows)
+- `--force` — overwrite an existing `.claude/wiki/`. Without it, if the folder already exists, stop and ask before writing anything
+- `--modules-only` — write `modules/` pages and `README.md` only
+- `--api-only` — write `api/` pages and `README.md` only
+- `--html-only` — skip the markdown pages and generate `html/` only
+- `--svg-only` — regenerate only `html/mindmap.svg`, `html/architecture.svg` and `html/workflows.svg`
 
 ## Quality Standards
 
 1. **Completeness:**
    - Every module must have a page
-   - Every function must be documented
+   - Every public module, class, function and API endpoint is documented. Private helpers are grouped under their module page
    - Every API endpoint must have full documentation
 
 2. **Accuracy:**
